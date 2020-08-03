@@ -122,7 +122,7 @@ public class EnterMedication extends AppCompatActivity  implements AdapterView.O
     {
         emedication=findViewById(R.id.medication);
         edate=findViewById(R.id.date);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         edate.setText(dateFormat.format(new Date()));
         etime=findViewById(R.id.time);
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm aa");
@@ -153,7 +153,16 @@ public class EnterMedication extends AppCompatActivity  implements AdapterView.O
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        edate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                        String month,day;
+                        month=String.valueOf(monthOfYear+1);
+                        day=String.valueOf(dayOfMonth);
+                        if(monthOfYear < 10){
+                            month = "0" + month;
+                        }
+                        if(dayOfMonth < 10){
+                            day  = "0" + day ;
+                        }
+                        edate.setText(year + "/" + month + "/" + day);
                     }
                 }, year, month, day);
         datepicker.show();
@@ -204,7 +213,7 @@ public class EnterMedication extends AppCompatActivity  implements AdapterView.O
             awesomeValidation.addValidation(this,R.id.dosage,"^[0-9]{1,}$",R.string.error_dos);
         }
         //validate date
-        awesomeValidation.addValidation(this,R.id.date,"^[0-9]{1,2}[/][0-9]{1,2}[/][0-9]{4}$",R.string.error_date2);
+        awesomeValidation.addValidation(this,R.id.date,"^[0-9]{4}[/][0-9]{1,2}[/][0-9]{1,2}$",R.string.error_date2);
         //validate time
         awesomeValidation.addValidation(this,R.id.time,"((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))",R.string.error_time2);
 

@@ -106,7 +106,7 @@ public class Signup extends AppCompatActivity {
                     setPreferences(); //set preferences for Login
                     if(utils.getEmail(this)!=null || !utils.getEmail(this).equals(" "))
                     {
-                        Toast.makeText(this, "Successfull", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "SignUp Successfull", Toast.LENGTH_LONG).show();
                         Intent i2=new Intent(this,MainActivity.class);
                         startActivity(i2);
                         finish();

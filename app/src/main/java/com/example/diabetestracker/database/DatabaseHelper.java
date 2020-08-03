@@ -14,6 +14,8 @@ import com.example.diabetestracker.model.Medication;
 import com.example.diabetestracker.model.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION=1;
@@ -218,10 +220,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public ArrayList<Sugar> getSugarEntries(String email)
     {
         SQLiteDatabase db=this.getWritableDatabase();
-        String selection=DatabaseContract.SugarTable.COL_EMAIL+" = ?";
+        String selection=DatabaseContract.SugarTable.COL_EMAIL+" =? ";
         String[] selectionArgs={email};
-        String order=DatabaseContract.SugarTable._ID+" DESC";
-        //  Sugar sugar=new Sugar();
+        String order=DatabaseContract.SugarTable.COL_DATE+", "+DatabaseContract.SugarTable.COL_TIME+" DESC";
+
         int i=0;
         ArrayList<Sugar> sugarEntries=new ArrayList<>();
         try{
@@ -241,6 +243,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             Log.d("TAG",e.getMessage());
         }
+        //Comparator<Sugar> comparator=Comparable.;
+     //   Collections.sort(sugarEntries );
         return sugarEntries;
     }
     public boolean deleteSugarRecord(String email,String id)
@@ -333,7 +337,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         String selection=DatabaseContract.MedicationsTable.COL_EMAIL+" = ?";
         String[] selectionArgs={email};
-        String order=DatabaseContract.MedicationsTable._ID+" DESC";
+        String order=DatabaseContract.MedicationsTable.COL_DATE+", "+DatabaseContract.MedicationsTable.COL_TIME+" DESC";
         ArrayList<Medication> medEntries=new ArrayList<>();
         try{
             Cursor cursor=db.query(DatabaseContract.MedicationsTable.TABLE_NAME,null,selection,selectionArgs,null,null,order);
@@ -443,7 +447,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         String selection=DatabaseContract.WeightTable.COL_EMAIL+" = ?";
         String[] selectionArgs={email};
-        String order=DatabaseContract.WeightTable._ID+" DESC";
+        String order=DatabaseContract.WeightTable.COL_DATE+", "+DatabaseContract.WeightTable.COL_TIME+" DESC";
         ArrayList<Weight> weightEntries=new ArrayList<>();
         try{
             Cursor cursor=db.query(DatabaseContract.WeightTable.TABLE_NAME,null,selection,selectionArgs,null,null,order);
