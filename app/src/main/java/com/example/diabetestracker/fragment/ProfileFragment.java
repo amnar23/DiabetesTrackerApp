@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.diabetestracker.activities.EditProfile;
 import com.example.diabetestracker.R;
 
 public class ProfileFragment extends Fragment {
@@ -45,12 +46,12 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i ;
-                       // i= new Intent(getActivity(), EditProfile.class);
-               /* i.putExtra("name",name);
+                i= new Intent(getActivity(), EditProfile.class);
+                i.putExtra("name",name);
                 i.putExtra("dob",DOB);
                 i.putExtra("gender",gender);
                 i.putExtra("password",password);
-                startActivity(i);*/
+                startActivity(i);
             }
         });
         return v;
