@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.diabetestracker">
+    <!-- Alarm Permission -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activities.SugarLog"></activity>
+        <activity android:name=".activities.EnterSugar" />
+        <activity
+            android:name=".activities.WeightLog"
+            android:label="Weight Log" />
+        <activity
+            android:name=".activities.EnterWeight"
+            android:label="Weight Entry" />
+        <activity
+            android:name=".activities.MedicationLog"
+            android:label="Medication Log" />
+        <activity
+            android:name=".activities.EnterMedication"
+            android:label="Medication Entry" />
+        <activity
+            android:name=".activities.Reminder"
+            android:label="Reminder" />
+        <activity android:name=".activities.Signup" />
+        <activity android:name=".activities.Login" />
+        <activity android:name=".activities.Welcome" />
+        <activity android:name=".activities.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.DarkActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
