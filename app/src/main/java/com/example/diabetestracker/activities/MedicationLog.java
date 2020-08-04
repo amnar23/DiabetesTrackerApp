@@ -1,13 +1,19 @@
 package com.example.diabetestracker.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +31,10 @@ import com.example.diabetestracker.custom.CustomMedicationList;
 import com.example.diabetestracker.database.DatabaseHelper;
 import com.example.diabetestracker.model.Medication;
 import com.example.diabetestracker.utils.Preferences;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -41,6 +51,9 @@ public class MedicationLog extends AppCompatActivity {
     Medication med;
     String id,email,email1;
     AlertDialog.Builder builder;
+    //Location
+    FusedLocationProviderClient client;
+    Double lat=0.0,lang=0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +64,8 @@ public class MedicationLog extends AppCompatActivity {
         med=new Medication();
         utils = new Preferences();
         db = new DatabaseHelper(this);
+        //location
+        client = LocationServices.getFusedLocationProviderClient(this);
         getMedEntries();
         if(!medEntries.isEmpty())
             new MedicationLog.GetMedData().execute();
@@ -63,7 +78,7 @@ public class MedicationLog extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
-        else
+        else if (item.getItemId()== R.id.dlt)
         {
             builder=new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to clear all records?");
@@ -86,6 +101,14 @@ public class MedicationLog extends AppCompatActivity {
             });
             AlertDialog alertDialog=builder.create();
             alertDialog.show();
+        }
+        else if(item.getItemId()==R.id.pharm)//pharmacy option menu clicked
+        {
+            if (ActivityCompat.checkSelfPermission(MedicationLog.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            } else {
+                ActivityCompat.requestPermissions(MedicationLog.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -220,7 +243,48 @@ public class MedicationLog extends AppCompatActivity {
     //options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.log_options, menu);
+        getMenuInflater().inflate(R.menu.medlog_options, menu);
         return true;
+    }
+    //Get Current Location
+    private void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Task<Location> task = client.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(final Location location) {
+                if(location!=null)
+                {
+                    lat=location.getLatitude();
+                    lang=location.getLongitude();
+                    // Search for restaurants nearby
+                    Uri gmmIntentUri = Uri.parse("geo:"+String.valueOf(lat)+","+String.valueOf(lang)+"?q=pharmacies");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==44)
+        {
+            if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED)
+            {
+                getCurrentLocation();
+            }
+        }
     }
 }
