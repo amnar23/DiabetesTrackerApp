@@ -75,39 +75,53 @@ public class EnterMedication extends AppCompatActivity  implements AdapterView.O
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
-    //back button Onclick
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            builder=new AlertDialog.Builder(this);
-            builder.setMessage("Exit without saving?");
-            builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
-                    {
-                        Intent i2=new Intent(EnterMedication.this, MainActivity.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                    else
-                    {
-                        Intent i2=new Intent(EnterMedication.this, MedicationLog.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alertDialog=builder.create();
-            alertDialog.show();
+        if (item.getItemId() == android.R.id.home)//back button Onclick
+        {
+            showAlert();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //Back button click
+    @Override
+    public void onBackPressed()
+    {
+        showAlert();
+    }
+    //Show alert dialogue box
+    private void showAlert()
+    {
+        builder=new AlertDialog.Builder(this);
+        if(i.hasExtra("med"))
+            builder.setMessage("Exit without changing?");
+        else
+            builder.setMessage("Exit without saving?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
+                {
+                    Intent i2=new Intent(EnterMedication.this, MainActivity.class);
+                    startActivity(i2);
+                    finish();
+                }
+                else
+                {
+                    Intent i2=new Intent(EnterMedication.this, MedicationLog.class);
+                    startActivity(i2);
+                    finish();
+                }
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
     }
     //Spinner - OnItemSelectedListener methods
     @Override

@@ -58,7 +58,12 @@ public class SugarLog extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
-
+    //options menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.log_options, menu);
+        return true;
+    }
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home)  //back button Onclick
         {
@@ -89,6 +94,16 @@ public class SugarLog extends AppCompatActivity {
             alertDialog.show();
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.clear);
+        if(sugarEntries.isEmpty())     //if sugar log is empty-disable clear log options menu
+            item.setEnabled(false);
+        else                            //if sugar log is not empty-enable clear log options menu
+            item.setEnabled(true);
+        super.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
     //floating button - onclick
     public void sugarEntry(View view)
@@ -121,7 +136,7 @@ public class SugarLog extends AppCompatActivity {
                 @Override
                 public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                     switch (index) {
-                        case 0:
+                        case 0: //edit this record
                             Intent i2=new Intent(SugarLog.this, EnterSugar.class);
                             i2.putExtra("conc",sugarEntries.get(position).getConcentration());
                             i2.putExtra("measured",sugarEntries.get(position).getMeasured());
@@ -215,10 +230,5 @@ public class SugarLog extends AppCompatActivity {
             menu.addMenuItem(deleteItem);
         }
     };
-    //options menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.log_options, menu);
-        return true;
-    }
+
 }

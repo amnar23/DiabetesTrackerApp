@@ -42,6 +42,7 @@ public class WeightLog extends AppCompatActivity {
     AlertDialog.Builder builder;
     Weight clickedWeight;
     String email,id,email1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,12 +62,17 @@ public class WeightLog extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
-    //back button Onclick
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.log_options, menu);
+        return true;
+    }
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home)  //back button Onclick
+        {
             finish();
         }
-        else
+        else    //clear log onclick
         {
             builder=new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to clear all records?");
@@ -91,6 +97,16 @@ public class WeightLog extends AppCompatActivity {
             alertDialog.show();
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.clear);
+        if(weightEntries.isEmpty())     //if weight log is empty-disable clear log options menu
+            item.setEnabled(false);
+        else                            //if weight log is not empty-enable clear log options menu
+            item.setEnabled(true);
+        super.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
     //floating button Onclick
     public void weightEntry(View v)
@@ -213,10 +229,4 @@ public class WeightLog extends AppCompatActivity {
             menu.addMenuItem(deleteItem);
         }
     };
-    //
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.log_options, menu);
-        return true;
-    }
 }

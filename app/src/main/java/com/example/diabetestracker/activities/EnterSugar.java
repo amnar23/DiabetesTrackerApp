@@ -75,36 +75,50 @@ public class EnterSugar extends AppCompatActivity  implements AdapterView.OnItem
     //back button Onclick
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            builder=new AlertDialog.Builder(this);
-            builder.setMessage("Exit without saving?");
-            builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
-                    {
-                        Intent i2=new Intent(EnterSugar.this, MainActivity.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                    else
-                    {
-                        Intent i2=new Intent(EnterSugar.this, SugarLog.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alertDialog=builder.create();
-            alertDialog.show();
+            showAlert();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //Back button click
+    @Override
+    public void onBackPressed()
+    {
+        showAlert();
+    }
+    //Show alert dialogue box
+    private void showAlert()
+    {
+        builder=new AlertDialog.Builder(this);
+        if(i.hasExtra("conc"))
+            builder.setMessage("Exit without changing?");
+        else
+            builder.setMessage("Exit without saving?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
+                {
+                    Intent i2=new Intent(EnterSugar.this, MainActivity.class);
+                    startActivity(i2);
+                    finish();
+                }
+                else
+                {
+                    Intent i2=new Intent(EnterSugar.this, SugarLog.class);
+                    startActivity(i2);
+                    finish();
+                }
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

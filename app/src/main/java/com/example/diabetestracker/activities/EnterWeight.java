@@ -60,39 +60,53 @@ public class EnterWeight extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
-    //back button Onclick
+
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            builder=new AlertDialog.Builder(this);
-            builder.setMessage("Exit without saving?");
-            builder.setCancelable(false);
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
-                    {
-                        Intent i2=new Intent(EnterWeight.this, MainActivity.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                    else
-                    {
-                        Intent i2=new Intent(EnterWeight.this, WeightLog.class);
-                        startActivity(i2);
-                        finish();
-                    }
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alertDialog=builder.create();
-            alertDialog.show();
+        if (item.getItemId() == android.R.id.home)  //back button Onclick
+        {
+           showAlert();
         }
         return super.onOptionsItemSelected(item);
+    }
+    //Back button click
+    @Override
+    public void onBackPressed()
+    {
+        showAlert();
+    }
+    private void showAlert()
+    {
+        builder=new AlertDialog.Builder(this);
+        if(i.hasExtra("weight"))
+            builder.setMessage("Exit without changing?");
+        else
+            builder.setMessage("Exit without saving?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(i.getIntExtra("flag",0)==1)//if activity started from Mainactivity
+                {
+                    Intent i2=new Intent(EnterWeight.this, MainActivity.class);
+                    startActivity(i2);
+                    finish();
+                }
+                else
+                {
+                    Intent i2=new Intent(EnterWeight.this, WeightLog.class);
+                    startActivity(i2);
+                    finish();
+                }
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
     }
     private void getEditTexts()
     {

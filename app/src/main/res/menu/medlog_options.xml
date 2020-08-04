@@ -6,5 +6,5 @@
         android:icon="@drawable/ic_launcher_pharmacy_foreground"
         app:showAsAction="always" />
     <item android:title="Clear Log"
-        android:id="@+id/dlt"></item>
+        android:id="@+id/clearMed"></item>
 </menu>

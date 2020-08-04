@@ -73,12 +73,18 @@ public class MedicationLog extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
-    //back button Onclick
+    //options menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.medlog_options, menu);
+        return true;
+    }
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home)//back button Onclick
+        {
             finish();
         }
-        else if (item.getItemId()== R.id.dlt)
+        else if (item.getItemId()== R.id.clearMed)//Clear Log OnClick
         {
             builder=new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to clear all records?");
@@ -111,6 +117,16 @@ public class MedicationLog extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item= menu.findItem(R.id.clearMed);
+        if(medEntries.isEmpty())        //if medication log is empty-disable clear log options menu
+            item.setEnabled(false);
+        else                            //if medication log is not empty-enable clear log options menu
+            item.setEnabled(true);
+        super.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
     //floating button - onclick
     public void medEntry(View v)
@@ -240,12 +256,7 @@ public class MedicationLog extends AppCompatActivity {
             //hello
         }
     };
-    //options menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.medlog_options, menu);
-        return true;
-    }
+
     //Get Current Location
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
