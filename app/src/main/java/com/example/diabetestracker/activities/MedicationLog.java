@@ -13,9 +13,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -54,6 +57,7 @@ public class MedicationLog extends AppCompatActivity {
     //Location
     FusedLocationProviderClient client;
     Double lat=0.0,lang=0.0;
+    private View mLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,7 @@ public class MedicationLog extends AppCompatActivity {
         db = new DatabaseHelper(this);
         //location
         client = LocationServices.getFusedLocationProviderClient(this);
+        mLayout=findViewById(R.id.linearLayout1);
         getMedEntries();
         if(!medEntries.isEmpty())
             new MedicationLog.GetMedData().execute();
@@ -110,11 +115,30 @@ public class MedicationLog extends AppCompatActivity {
         }
         else if(item.getItemId()==R.id.pharm)//pharmacy option menu clicked
         {
-            if (ActivityCompat.checkSelfPermission(MedicationLog.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
-            } else {
-                ActivityCompat.requestPermissions(MedicationLog.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+            boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // Check if enabled and if not send user to the GPS settings
+            if (!enabled) {
+                Snackbar.make(mLayout, "Location Service is OFF ",
+                        Snackbar.LENGTH_INDEFINITE).setAction("Turn On", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                }).show();
+
             }
+            if(enabled)
+            {
+                if (ActivityCompat.checkSelfPermission(MedicationLog.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    getCurrentLocation();
+                } else {
+                    ActivityCompat.requestPermissions(MedicationLog.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+                }
+            }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -259,7 +283,8 @@ public class MedicationLog extends AppCompatActivity {
 
     //Get Current Location
     private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -267,34 +292,38 @@ public class MedicationLog extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+
         }
-        Task<Location> task = client.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(final Location location) {
-                if(location!=null)
-                {
-                    lat=location.getLatitude();
-                    lang=location.getLongitude();
-                    // Search for restaurants nearby
-                    Uri gmmIntentUri = Uri.parse("geo:"+String.valueOf(lat)+","+String.valueOf(lang)+"?q=pharmacies");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+
+            Task<Location> task = client.getLastLocation();
+            task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(final Location location) {
+                    if(location!=null)
+                    {
+                        lat=location.getLatitude();
+                        lang=location.getLongitude();
+                        // Search for pharmacies nearby
+                        Uri gmmIntentUri = Uri.parse("geo:"+String.valueOf(lat)+","+String.valueOf(lang)+"?q=pharmacies");
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    }
                 }
-            }
-        });
+            });
+
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==44)
-        {
-            if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED)
-            {
+        if(requestCode==44) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation();
+            } else
+            {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
