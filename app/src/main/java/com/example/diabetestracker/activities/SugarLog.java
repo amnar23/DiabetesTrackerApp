@@ -61,7 +61,7 @@ public class SugarLog extends AppCompatActivity {
     //options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.log_options, menu);
+        getMenuInflater().inflate(R.menu.sugarlog_options, menu);
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -69,7 +69,7 @@ public class SugarLog extends AppCompatActivity {
         {
             finish();
         }
-        else    //clear sugar log - options menu
+        else if(item.getItemId()==R.id.clear)   //clear sugar log - options menu
         {
             builder=new AlertDialog.Builder(this);
             builder.setMessage("Are you sure you want to clear all records?");
@@ -92,6 +92,16 @@ public class SugarLog extends AppCompatActivity {
             });
             AlertDialog alertDialog=builder.create();
             alertDialog.show();
+        }
+        else if(item.getItemId()==R.id.level)
+        {
+            Intent i = new Intent(this, TargetLevels.class);
+            startActivity(i);
+        }
+        else if(item.getItemId()==R.id.warning)
+        {
+            Intent i2 = new Intent(this, SugarWarning.class);
+            startActivity(i2);
         }
         return super.onOptionsItemSelected(item);
     }

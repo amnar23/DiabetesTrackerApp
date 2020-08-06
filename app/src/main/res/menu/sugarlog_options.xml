@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Target Sugar Level"
+        android:id="@+id/level"></item>
+    <item android:title="Sugar Warnings"
+        android:id="@+id/warning"></item>
+    <item android:title="Clear Log"
+        android:id="@+id/clear"></item>
+</menu>
