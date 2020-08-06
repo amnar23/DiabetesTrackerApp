@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.diabetestracker.activities.Statistics;
 import com.example.diabetestracker.activities.SugarLog;
 import com.example.diabetestracker.activities.WeightLog;
 import com.example.diabetestracker.activities.MedicationLog;
@@ -45,6 +46,14 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), WeightLog.class);
+                startActivity(i);
+            }
+        });
+        b4 = v.findViewById(R.id.stat);
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), Statistics.class);
                 startActivity(i);
             }
         });

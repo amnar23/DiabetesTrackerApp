@@ -1,12 +1,15 @@
 package com.example.diabetestracker.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -38,6 +41,7 @@ public class EditProfile extends AppCompatActivity {
     String gender,email;
     Preferences utils;
     DatabaseHelper dbHelper;
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,43 @@ public class EditProfile extends AppCompatActivity {
         setViews();
         dbHelper=new DatabaseHelper(this);
         utils=new Preferences();
+        //back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)//back button Onclick
+        {
+            showAlert();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    //Back button click
+    @Override
+    public void onBackPressed()
+    {
+        showAlert();
+    }
+    //Show alert dialogue box
+    private void showAlert()
+    {
+        builder=new AlertDialog.Builder(this);
+        builder.setMessage("Exit without updating?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                    finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog=builder.create();
+        alertDialog.show();
     }
     //find editTexts
     private void findViews()

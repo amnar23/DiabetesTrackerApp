@@ -13,9 +13,11 @@ import com.example.diabetestracker.model.Weight;
 import com.example.diabetestracker.model.Medication;
 import com.example.diabetestracker.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION=1;
@@ -222,7 +224,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         String selection=DatabaseContract.SugarTable.COL_EMAIL+" =? ";
         String[] selectionArgs={email};
-        String order=DatabaseContract.SugarTable.COL_DATE+", "+DatabaseContract.SugarTable.COL_TIME+" DESC";
+        String order=DatabaseContract.SugarTable.COL_DATE+" DESC, "+DatabaseContract.SugarTable.COL_TIME+" DESC";
 
         int i=0;
         ArrayList<Sugar> sugarEntries=new ArrayList<>();
@@ -243,8 +245,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             Log.d("TAG",e.getMessage());
         }
-        //Comparator<Sugar> comparator=Comparable.;
-     //   Collections.sort(sugarEntries );
         return sugarEntries;
     }
     public boolean deleteSugarRecord(String email,String id)
@@ -288,7 +288,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
-    //clear Weight log
+    //clear Sugar log
     public boolean clearSugarLog(String email)
     {
         SQLiteDatabase db=this.getWritableDatabase();
@@ -305,6 +305,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(i>0)
             return true;
         return false;
+    }
+    public ArrayList<Sugar> getLastMonthEntries(String email)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String date=dateFormat.format(new Date());
+        SQLiteDatabase db=this.getWritableDatabase();
+        String q="SELECT * FROM "+DatabaseContract.SugarTable.TABLE_NAME+" WHERE "+DatabaseContract.SugarTable.COL_EMAIL+"= '"+email+"' AND substr("+DatabaseContract.SugarTable.COL_DATE+",1,4)||'-'|| substr("+DatabaseContract.SugarTable.COL_DATE+",6,2)||'-'|| substr("+DatabaseContract.SugarTable.COL_DATE+",9,2) > date('now','localtime','-30 days')";
+        int i=0;
+        ArrayList<Sugar> sugarEntries=new ArrayList<>();
+        try{
+            Cursor cursor=db.rawQuery(q,null);
+            while(cursor.moveToNext())
+            {
+                Sugar sugar=new Sugar();
+                //sugar.setId(cursor.getInt(0));
+                sugar.setConcentration(cursor.getInt(1));
+                sugar.setMeasured(cursor.getString(2));
+                sugar.setDate(cursor.getString(3));
+                sugar.setTime(cursor.getString(4));
+               // sugar.setEmail(cursor.getString(5));
+                sugarEntries.add(sugar);
+            }
+            Log.d("Tag",String.valueOf(cursor.getCount()));
+        }catch (SQLiteException e)
+        {
+            Log.d("TAG",e.getMessage());
+        }
+        return sugarEntries;
+    }
+    public ArrayList<Sugar> getLastWeekEntries(String email)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        String date=dateFormat.format(new Date());
+        SQLiteDatabase db=this.getWritableDatabase();
+        String q="SELECT * FROM "+DatabaseContract.SugarTable.TABLE_NAME+" WHERE "+DatabaseContract.SugarTable.COL_EMAIL+"= '"+email+"' AND substr("+DatabaseContract.SugarTable.COL_DATE+",1,4)||'-'|| substr("+DatabaseContract.SugarTable.COL_DATE+",6,2)||'-'|| substr("+DatabaseContract.SugarTable.COL_DATE+",9,2) > date('now','localtime','-7 days')";
+        int i=0;
+        ArrayList<Sugar> sugarEntries=new ArrayList<>();
+        try{
+            Cursor cursor=db.rawQuery(q,null);
+            while(cursor.moveToNext())
+            {
+                Sugar sugar=new Sugar();
+                //sugar.setId(cursor.getInt(0));
+                sugar.setConcentration(cursor.getInt(1));
+                sugar.setMeasured(cursor.getString(2));
+                sugar.setDate(cursor.getString(3));
+                sugar.setTime(cursor.getString(4));
+                // sugar.setEmail(cursor.getString(5));
+                sugarEntries.add(sugar);
+            }
+            Log.d("Tag",String.valueOf(cursor.getCount()));
+        }catch (SQLiteException e)
+        {
+            Log.d("TAG",e.getMessage());
+        }
+        return sugarEntries;
     }
     //Medication
     // add medication entry
@@ -337,7 +393,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         String selection=DatabaseContract.MedicationsTable.COL_EMAIL+" = ?";
         String[] selectionArgs={email};
-        String order=DatabaseContract.MedicationsTable.COL_DATE+", "+DatabaseContract.MedicationsTable.COL_TIME+" DESC";
+        String order=DatabaseContract.MedicationsTable.COL_DATE+" DESC, "+DatabaseContract.MedicationsTable.COL_TIME+" DESC";
         ArrayList<Medication> medEntries=new ArrayList<>();
         try{
             Cursor cursor=db.query(DatabaseContract.MedicationsTable.TABLE_NAME,null,selection,selectionArgs,null,null,order);
@@ -422,6 +478,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         return false;
     }
+
     //Weight
     public boolean addWeight(Weight weight)
     {
@@ -447,7 +504,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         String selection=DatabaseContract.WeightTable.COL_EMAIL+" = ?";
         String[] selectionArgs={email};
-        String order=DatabaseContract.WeightTable.COL_DATE+", "+DatabaseContract.WeightTable.COL_TIME+" DESC";
+        String order=DatabaseContract.WeightTable.COL_DATE+" DESC, "+DatabaseContract.WeightTable.COL_TIME+" DESC";
         ArrayList<Weight> weightEntries=new ArrayList<>();
         try{
             Cursor cursor=db.query(DatabaseContract.WeightTable.TABLE_NAME,null,selection,selectionArgs,null,null,order);

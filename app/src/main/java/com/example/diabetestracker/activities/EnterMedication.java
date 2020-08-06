@@ -69,7 +69,7 @@ public class EnterMedication extends AppCompatActivity  implements AdapterView.O
         {
             updateMed();
             ImageView img=findViewById(R.id.image);
-            //img.setImageResource(R.drawable.weightentry);
+            img.setImageResource(R.drawable.edit_entry);
         }
         //back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
