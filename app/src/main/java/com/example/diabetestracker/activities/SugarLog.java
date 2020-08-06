@@ -214,7 +214,8 @@ public class SugarLog extends AppCompatActivity {
             SwipeMenuItem openItem = new SwipeMenuItem(
                     getApplicationContext());
             // set item background
-            openItem.setBackground(R.color.green);
+            openItem.setBackground(new ColorDrawable(Color.rgb(0x3a, 0xf4,
+                    0x2a)));
             // set item width
             openItem.setWidth(170);
             // set item title
